@@ -1,0 +1,53 @@
+services:
+  - type: web
+    name: api-backend
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    envVars:
+      - key: PORT
+        value: 3000
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 1d
+      - key: POSTGRES_HOST
+        fromDatabase:
+          name: db-usuarios
+          property: host
+      - key: POSTGRES_PORT
+        value: 5432
+      - key: POSTGRES_USER
+        fromDatabase:
+          name: db-usuarios
+          property: user
+      - key: POSTGRES_PASSWORD
+        fromDatabase:
+          name: db-usuarios
+          property: password
+      - key: POSTGRES_DB
+        fromDatabase:
+          name: db-usuarios
+          property: database
+      - key: MONGO_URI
+        sync: false
+
+  - type: static
+    name: frontend-app
+    env: node
+    rootDir: frontend
+    buildCommand: yarn install && yarn build
+    publishDir: dist
+    plan: free
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: api-backend
+          property: host
+
+databases:
+  - name: db-usuarios
+    databaseName: db_usuarios
+    user: postgres_user
+    plan: free
