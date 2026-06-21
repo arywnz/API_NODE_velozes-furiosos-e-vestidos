@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
 
 const Login = () => {
   const { login } = useAuth();
+  const navigate = useNavigate();
   const [isRegister, setIsRegister] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -27,6 +29,7 @@ const Login = () => {
         setPassword('');
       } else {
         await login(email, password);
+        navigate('/');
       }
     } catch (err) {
       setError(err.message || 'Ocorreu um erro no processamento.');
