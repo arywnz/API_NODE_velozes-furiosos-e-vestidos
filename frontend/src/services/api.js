@@ -25,7 +25,22 @@ const requisitar = async (caminho, metodo = 'GET', dados = null, token = null) =
     return null;
   }
 
-  const payload = await resposta.json();
+  let payload = null;
+  const contentType = resposta.headers.get('content-type');
+  if (contentType && contentType.includes('application/json')) {
+    try {
+      payload = await resposta.json();
+    } catch (e) {
+      payload = { erro: 'Erro ao ler a resposta JSON do servidor.' };
+    }
+  } else {
+    try {
+      const texto = await resposta.text();
+      payload = { erro: texto || `Erro do servidor (Status: ${resposta.status})` };
+    } catch (e) {
+      payload = { erro: `Erro desconhecido do servidor (Status: ${resposta.status})` };
+    }
+  }
 
   if (!resposta.ok) {
     throw new Error(payload.erro || 'Falha ao processar a requisição');
