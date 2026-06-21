@@ -38,7 +38,6 @@ services:
     rootDir: frontend
     buildCommand: yarn install && yarn build
     staticPublishPath: dist
-    plan: free
     envVars:
       - key: VITE_API_URL
         fromService:
