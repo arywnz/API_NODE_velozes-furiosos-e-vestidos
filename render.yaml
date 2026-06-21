@@ -32,12 +32,12 @@ services:
       - key: MONGO_URI
         sync: false
 
-  - type: static
+  - type: web
     name: frontend-app
-    env: node
+    runtime: static
     rootDir: frontend
     buildCommand: yarn install && yarn build
-    publishDir: dist
+    staticPublishPath: dist
     plan: free
     envVars:
       - key: VITE_API_URL
